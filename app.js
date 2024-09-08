@@ -1,67 +1,9 @@
-// const http = require('http');
-
-// function rqListener(req, res){
-
-// }
-
-// http.createServer(rqListener);
-
-// const http = require('http');
-// http.createServer(function(req, res){
-
-// })
-
 const http = require("http");
-const fs = require("fs");
 
-const server = http.createServer((req, res) => {
-  const url = req.url;
-  const method = req.method;
-  if (url === "/") {
-    res.setHeader("Content-Type", "text/html");
-    res.write("<html>");
-    res.write("<head><title> test </title></head>");
-    res.write(
-      '<body><form action="/message" method="POST"><input type="text" name="message" ><button type="submit">click</button></form></body>'
-    );
-    res.write("</html>");
-    return res.end();
-  }
+const routes = require('./routes')
 
-  // console.log(req.url , req.method, req.headers);
-  //process.exit();
+console.log(routes.someText)
 
-  if (url === "/message" && method === "POST") {
-    const body = [];
-    req.on("data", (chunk) => {
-     console.log(chunk);
-      body.push(chunk);
-      console.log(body);
-    });
-
-    return req.on("end", () => {
-      const parseBody = Buffer.concat(body).toString();
-      const message = parseBody.split("=")[1];
-      // console.log(" massage eka pako :"+ message);
-      fs.writeFile("message.text", message, (err) => {
-          if (err) {
-               console.error("Error writing file:", err);
-             }
-     
-             // Redirect after writing the file
-             res.statusCode = 302;
-             res.setHeader("Location", "/");
-             return res.end();
-      });
-    });
-  }
-
-  res.setHeader("Content-Type", "text/html");
-  res.write("<html>");
-  res.write("<head><title> test </title></head>");
-  res.write("<body><h1> nodejs server is running </h1></body>");
-  res.write("</html>");
-  res.end();
-});
+const server = http.createServer(routes.handler) 
 
 server.listen(8080);
